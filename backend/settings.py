@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os #Eliminar cuando termine prueba
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,6 +32,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.sites', # Agrega la aplicación de sitios
+    
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount.providers.google', # Agrega el proveedor de Google para autenticación social
+    # Optional -- requires install using `django-allauth[socialaccount]`.
+    'allauth.socialaccount',
+  
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,9 +54,50 @@ INSTALLED_APPS = [
     'api',             # Nuestra aplicación creada
 ]
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+# Permite el registro automático de usuarios
+ACCOUNT_SIGNUP_FIELDS = ['email*']  # Especificamos que solo se usará email
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # Verificación obligatoria por email
+ACCOUNT_AUTHENTICATED_REDIRECT_URL = '/'  # Redirige a la página principal después de autenticarse
+ACCOUNT_LOGIN_METHODS = {'email'}  # Permite el inicio de sesión solo con email
+
+
+SOCIALACCOUNT_AUTO_SIGNUP = True  # Esto asegura que el usuario se registre automáticamente
+SOCIALACCOUNT_QUERY_EMAIL = True  # Esto asegura que el email de Google se use durante el registro
+
+
+# settings.py
+
+LOGOUT_REDIRECT_URL = 'accounts/google-login/'  # Esto redirige al login después de cerrar sesión
+LOGIN_REDIRECT_URL = '/dashboard/'  # URL a la que se redirige después de iniciar sesión
+
+SITE_ID = 1
+
+# Provider specific settings
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True,
+    }
+}
+
 AUTH_USER_MODEL = 'accounts.CustomUser' #Se cambia el modelo de usuario por el creado en accounts
 
 MIDDLEWARE = [
+    # Add the account middleware:
+    "allauth.account.middleware.AccountMiddleware",
+
+    
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -61,7 +112,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'accounts', 'templates')], #Dejar en blanco [] cuando termine prueba
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

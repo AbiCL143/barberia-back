@@ -2,6 +2,20 @@
 from rest_framework import viewsets
 from .models import CustomUser
 from .serializers import CustomUserSerializer
+from django.shortcuts import render, redirect
+from allauth.socialaccount.providers.google.views import OAuth2LoginView
+from django.contrib.auth import logout
+
+#Eliminar cuando termine prueba
+def google_login(request):
+    return render(request, 'google-login.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('google-login')  # Después de logout, redirigir a google-login
+
+def dashboard(request):
+    return render(request, 'dashboard.html')
     
 class UserViewSet(viewsets.ModelViewSet):
     # Listar todos los usuarios

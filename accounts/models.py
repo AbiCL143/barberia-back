@@ -7,17 +7,13 @@ class CustomUser(AbstractUser):
         (1, 'Barber'),
         (2, 'Client'),
     )
-    
-    username = None 
-    
+        
     #Se crea un campo de rol con las opciones de ROLE_CHOICES
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=2)
     
     #Se crea un campo de activo
     is_active = models.BooleanField(default=True)
 
-    #Se crea el email único por usuario
-    email = models.EmailField(unique=True)
 
     #Puntos de recompensa
     reward_points = models.PositiveIntegerField(default=0)
@@ -28,7 +24,6 @@ class CustomUser(AbstractUser):
     #Salario (solo aplicable a Barbers, pero por simplicidad ponemos null)
     salary = models.DecimalField(max_digits=10, decimal_places=2, default=None, blank=True, null=True)
     
-    USERNAME_FIELD = 'email'  # Django usará email para autenticarse
     REQUIRED_FIELDS = []  # Si quieres agregar más campos requeridos para superusuarios, agréguelos aquí
 
     class Meta:
@@ -36,4 +31,4 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         #Muestra el nombre de usuario y el rol
-        return f"{self.email} ({self.get_role_display()})"
+        return f"{self.username} ({self.get_role_display()})"
