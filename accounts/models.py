@@ -7,7 +7,11 @@ class CustomUser(AbstractUser):
         (1, 'Barber'),
         (2, 'Client'),
     )
-        
+    
+    email = models.EmailField(unique=True)  # Email como campo único
+    
+    username = None  # Eliminamos username para que no sea obligatorio
+    
     #Se crea un campo de rol con las opciones de ROLE_CHOICES
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=2)
     
@@ -24,6 +28,7 @@ class CustomUser(AbstractUser):
     #Salario (solo aplicable a Barbers, pero por simplicidad ponemos null)
     salary = models.DecimalField(max_digits=10, decimal_places=2, default=None, blank=True, null=True)
     
+    USERNAME_FIELD = 'email'  # Ahora el usuario se autentica con email
     REQUIRED_FIELDS = []  # Si quieres agregar más campos requeridos para superusuarios, agréguelos aquí
 
     class Meta:
@@ -31,7 +36,7 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         #Muestra el nombre de usuario y el rol
-        return f"{self.username} ({self.get_role_display()})"
+        return f"{self.email} ({self.get_role_display()})"
 
 # Modelo de los horarios de los barberos
 class BarberSchedule(models.Model):
