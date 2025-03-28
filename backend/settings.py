@@ -75,7 +75,7 @@ SOCIALACCOUNT_QUERY_EMAIL = True  # Esto asegura que el email de Google se use d
 LOGOUT_REDIRECT_URL = 'accounts/google-login/'  # Esto redirige al login después de cerrar sesión
 LOGIN_REDIRECT_URL = '/dashboard/'  # URL a la que se redirige después de iniciar sesión
 
-SITE_ID = 1
+SITE_ID = 4
 
 # Provider specific settings
 SOCIALACCOUNT_PROVIDERS = {
