@@ -1,13 +1,13 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import UserViewSet
+from .views import UserViewSet, BarberScheduleViewSet
 from . import views
 from django.contrib.auth.views import LogoutView
 
 # Registrar rutas del ViewSet
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
-#router.register(r'barber-schedules', BarberScheduleViewSet)
+router.register(r'barber-schedules', BarberScheduleViewSet)
 
 
 urlpatterns = [

@@ -32,3 +32,22 @@ class CustomUser(AbstractUser):
     def __str__(self):
         #Muestra el nombre de usuario y el rol
         return f"{self.username} ({self.get_role_display()})"
+
+# Modelo de los horarios de los barberos
+class BarberSchedule(models.Model):
+    id_schedule = models.AutoField(primary_key=True)
+    id_barber = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE, 
+        limit_choices_to={'role': 1},  # Solo usuarios con rol de "Barber"
+        related_name='schedules'
+    )
+    days = models.JSONField(default=list)  # Almacenar días como JSON (lista)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    class Meta:
+        db_table = 'barber_schedule'
+
+    def __str__(self):
+        return f"Horario de {self.id_barber.username}: {self.days}"

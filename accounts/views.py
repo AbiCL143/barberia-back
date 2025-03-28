@@ -1,7 +1,7 @@
 # accounts/views.py
 from rest_framework import viewsets
-from .models import CustomUser
-from .serializers import CustomUserSerializer
+from .models import CustomUser, BarberSchedule
+from .serializers import CustomUserSerializer, BarberScheduleSerializer
 from django.shortcuts import render, redirect
 from allauth.socialaccount.providers.google.views import OAuth2LoginView
 from django.contrib.auth import logout
@@ -13,6 +13,10 @@ def home(request):
 def logout_view(request):
     logout(request)
     return redirect('/') 
+
+class BarberScheduleViewSet(viewsets.ModelViewSet):
+    queryset = BarberSchedule.objects.all()
+    serializer_class = BarberScheduleSerializer
     
 class UserViewSet(viewsets.ModelViewSet):
     # Listar todos los usuarios

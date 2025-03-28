@@ -1,6 +1,11 @@
 # accounts/serializers.py
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, BarberSchedule
+
+class BarberScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BarberSchedule
+        fields = '__all__' 
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
