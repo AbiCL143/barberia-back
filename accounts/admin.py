@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, BarberSchedule
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
@@ -15,3 +15,10 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ('role', 'is_staff', 'is_active')
     search_fields = ('email', 'first_name', 'last_name')
     #ordering = ('email',)  # Cambiamos username por email
+    
+@admin.register(BarberSchedule)
+class BarberScheduleAdmin(admin.ModelAdmin):
+    list_display = ('id_barber', 'days', 'start_time', 'end_time')  # Campos visibles en la lista
+    list_filter = ('days',)  # Filtro en el panel de admin
+    search_fields = ('id_barber__username',)  # Permite buscar por el nombre del barbero
+    ordering = ('id_barber',)  # Ordenar por barbero
