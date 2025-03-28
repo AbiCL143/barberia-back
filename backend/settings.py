@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import os #Eliminar cuando termine prueba
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&pzugjfbane@57ch%_x-4%@-%izyruaj7u)%d7yh!*ewut4r@&'
+SECRET_KEY = 'django-insecure-=vd34y0s!p=h8)x@%sucub5aqv4yifg)_4hw5v2!w3w#qpdriw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,15 +30,10 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+SITE_ID = 4
+
 INSTALLED_APPS = [
-    'django.contrib.sites', # Agrega la aplicación de sitios
-    
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount.providers.google', # Agrega el proveedor de Google para autenticación social
-    # Optional -- requires install using `django-allauth[socialaccount]`.
-    'allauth.socialaccount',
-  
+    'accounts',         # Agrega la aplicación de cuentas
     
     'django.contrib.admin',
     'django.contrib.auth',
@@ -47,35 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    # Aplicaciones de terceros
-    'accounts',         # Agrega la aplicación de cuentas
-    'rest_framework',  # Agrega Django Rest Framework
-    'api',             # Nuestra aplicación creada
+    
+    'django.contrib.sites', # Agrega la aplicación de sitios
+    'allauth', # Agrega django-allauth
+    'allauth.account', # Agrega la aplicación de cuentas de django-allauth
+    'allauth.socialaccount', # Agrega la aplicación de cuentas sociales de django-allauth
+    'allauth.socialaccount.providers.google', # Agrega el proveedor de Google
 ]
-
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-)
-
-# Permite el registro automático de usuarios
-ACCOUNT_SIGNUP_FIELDS = ['email*']  # Especificamos que solo se usará email
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # Verificación obligatoria por email
-ACCOUNT_AUTHENTICATED_REDIRECT_URL = '/'  # Redirige a la página principal después de autenticarse
-ACCOUNT_LOGIN_METHODS = {'email'}  # Permite el inicio de sesión solo con email
-
-
-SOCIALACCOUNT_AUTO_SIGNUP = True  # Esto asegura que el usuario se registre automáticamente
-SOCIALACCOUNT_QUERY_EMAIL = True  # Esto asegura que el email de Google se use durante el registro
-
-
-# settings.py
-
-LOGOUT_REDIRECT_URL = 'accounts/google-login/'  # Esto redirige al login después de cerrar sesión
-LOGIN_REDIRECT_URL = '/dashboard/'  # URL a la que se redirige después de iniciar sesión
-
-SITE_ID = 4
 
 # Provider specific settings
 SOCIALACCOUNT_PROVIDERS = {
@@ -87,17 +59,15 @@ SOCIALACCOUNT_PROVIDERS = {
         'AUTH_PARAMS': {
             'access_type': 'online',
         },
-        'OAUTH_PKCE_ENABLED': True,
     }
 }
 
 AUTH_USER_MODEL = 'accounts.CustomUser' #Se cambia el modelo de usuario por el creado en accounts
 
+
 MIDDLEWARE = [
-    # Add the account middleware:
     "allauth.account.middleware.AccountMiddleware",
 
-    
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -112,7 +82,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'accounts', 'templates')], #Dejar en blanco [] cuando termine prueba
+        'DIRS': [  BASE_DIR / 'accounts' / 'templates',  ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -179,3 +149,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+LOGIN_DIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
