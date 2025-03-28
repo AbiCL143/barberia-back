@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&pzugjfbane@57ch%_x-4%@-%izyruaj7u)%d7yh!*ewut4r@&'
+SECRET_KEY = 'django-insecure-=vd34y0s!p=h8)x@%sucub5aqv4yifg)_4hw5v2!w3w#qpdriw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -30,23 +30,44 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+SITE_ID = 4
+
 INSTALLED_APPS = [
+    'accounts',         # Agrega la aplicación de cuentas
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    # Aplicaciones de terceros
-    'accounts',         # Agrega la aplicación de cuentas
-    'rest_framework',  # Agrega Django Rest Framework
-    'api',             # Nuestra aplicación creada
+    
+    'django.contrib.sites', # Agrega la aplicación de sitios
+    'allauth', # Agrega django-allauth
+    'allauth.account', # Agrega la aplicación de cuentas de django-allauth
+    'allauth.socialaccount', # Agrega la aplicación de cuentas sociales de django-allauth
+    'allauth.socialaccount.providers.google', # Agrega el proveedor de Google
 ]
+
+# Provider specific settings
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+    }
+}
 
 AUTH_USER_MODEL = 'accounts.CustomUser' #Se cambia el modelo de usuario por el creado en accounts
 
+
 MIDDLEWARE = [
+    "allauth.account.middleware.AccountMiddleware",
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -61,7 +82,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [  BASE_DIR / 'accounts' / 'templates',  ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -128,3 +149,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+LOGIN_DIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
