@@ -5,8 +5,8 @@ from .models import CustomUser, BarberSchedule
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        ('Información personal', {'fields': ('email','first_name', 'last_name', 'phone_number')}),
+        (None, {'fields': ('email', 'password')}),
+        ('Información personal', {'fields': ('first_name', 'last_name', 'phone_number')}),
         ('Rol y permisos', {'fields': ('role', 'is_staff', 'is_superuser', 'is_active')}),
         ('Otros datos', {'fields': ('reward_points', 'salary')}),
     )

@@ -10,7 +10,7 @@ class CustomUser(AbstractUser):
     
     email = models.EmailField(unique=True)  # Email como campo único
     
-    username = None  # Eliminamos username para que no sea obligatorio
+    username = models.CharField(max_length=150, blank=True, null=True)
     
     #Se crea un campo de rol con las opciones de ROLE_CHOICES
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=2)
@@ -36,7 +36,7 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         #Muestra el nombre de usuario y el rol
-        return f"{self.email} ({self.get_role_display()})"
+        return f"{self.username} ({self.get_role_display()})"
 
 # Modelo de los horarios de los barberos
 class BarberSchedule(models.Model):
