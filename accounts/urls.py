@@ -4,13 +4,14 @@ from .views import UserViewSet
 from . import views
 from django.contrib.auth.views import LogoutView
 
-# Crea un router y registra la vista del ViewSet
+# Registrar rutas del ViewSet
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
+#router.register(r'barber-schedules', BarberScheduleViewSet)
+
 
 urlpatterns = [
-    path('', include(router.urls)),  # Incluye las rutas del ViewSet
-    path('google-login/', views.google_login, name='google-login'), #Eliminar cuando termine prueba
-    path('dashboard/', views.dashboard, name='dashboard'),
-    #path('logout/', views.logout_view, name='logout'),  # Usar la vista personalizada
+    path('', views.home),  # Incluye las rutas del ViewSet
+    path('logout', views.logout_view),  # Usar la vista personalizada
+    path('', include(router.urls)),  # Rutas del ViewSet
 ]
