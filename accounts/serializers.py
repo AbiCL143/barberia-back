@@ -6,6 +6,11 @@ class BarberScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = BarberSchedule
         fields = '__all__' 
+    def validate_id_barber(self, value):
+        """Valida que el usuario asignado sea un barbero."""
+        if value.role != 1:
+            raise serializers.ValidationError("Solo los barberos pueden tener un horario.")
+        return value
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:

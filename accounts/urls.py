@@ -7,7 +7,8 @@ from django.contrib.auth.views import LogoutView
 # Registrar rutas del ViewSet
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
-router.register(r'barber-schedules', BarberScheduleViewSet)
+router.register(r'barber-schedules', BarberScheduleViewSet, basename='barberschedule')
+
 
 
 urlpatterns = [
