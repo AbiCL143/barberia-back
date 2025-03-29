@@ -157,3 +157,5 @@ AUTHENTICATION_BACKENDS = (
 
 LOGIN_DIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+ACCOUNT_LOGIN_METHOD = 'email'  # Solo se utilizará el correo electrónico para login
