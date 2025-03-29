@@ -28,6 +28,9 @@ class CustomUser(AbstractUser):
     #Salario (solo aplicable a Barbers, pero por simplicidad ponemos null)
     salary = models.DecimalField(max_digits=10, decimal_places=2, default=None, blank=True, null=True)
     
+    # Nuevo campo para el código de recuperación de contraseña
+    password_recovery_code = models.PositiveIntegerField(null=True, blank=True)
+    
     USERNAME_FIELD = 'email'  # Ahora el usuario se autentica con email
     REQUIRED_FIELDS = []  # Si quieres agregar más campos requeridos para superusuarios, agréguelos aquí
 
