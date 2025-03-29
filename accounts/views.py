@@ -1,11 +1,15 @@
 # accounts/views.py
+import random
+from django.conf import settings
+from django.core.mail import send_mail
+from rest_framework.views import APIView
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response  # IMPORTANTE: Importar Response
 from rest_framework.permissions import AllowAny
 from .models import CustomUser, BarberSchedule
 from .serializers import CustomUserSerializer, BarberScheduleSerializer
 from django.shortcuts import render, redirect
-from allauth.socialaccount.providers.google.views import OAuth2LoginView
 from django.contrib.auth import logout
 from accounts.permissions import IsAdmin, CanEditOwnProfile
 
@@ -73,3 +77,49 @@ class UserViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(role=role)
             
         return queryset
+    
+class PasswordRecoveryCodeView(APIView):
+    def post(self, request):
+            email = request.data.get("email")
+            
+            # Validar si el usuario existe
+            try:
+                user = CustomUser.objects.get(email=email)
+            except CustomUser.DoesNotExist:
+                return Response({"detail": "Email no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+            # Generar el código aleatorio de 5 dígitos
+            recovery_code = random.randint(10000, 99999)
+            
+            # Guardar el código de recuperación en el usuario (deberías tener un campo para esto, lo agregamos a continuación)
+            user.password_recovery_code = recovery_code
+            user.save()
+
+            # Enviar el correo con el código
+            send_mail(
+                subject="Código de recuperación de contraseña",
+                message=f"Tu código de recuperación es: {recovery_code}",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+
+            return Response({"detail": "Código enviado a tu correo."}, status=status.HTTP_200_OK)
+        
+class ValidateRecoveryCodeView(APIView):
+        def post(self, request):
+            email = request.data.get("email")
+            code = request.data.get("code")
+            
+            # Validar si el usuario existe
+            try:
+                user = CustomUser.objects.get(email=email)
+            except CustomUser.DoesNotExist:
+                return Response({"detail": "Email no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+            # Validar si el código de recuperación es correcto
+            if user.password_recovery_code == int(code):
+                return Response({"detail": "Código correcto."}, status=status.HTTP_200_OK)
+            else:
+                return Response({"detail": "Código incorrecto."}, status=status.HTTP_400_BAD_REQUEST)
+    

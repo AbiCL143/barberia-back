@@ -19,3 +19,6 @@ migrations/
 .vscode/
 .idea/
 *.iml
+
+# 🛑 Ignorar archivos de configuración de entornos
+.env
