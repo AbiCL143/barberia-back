@@ -37,6 +37,14 @@ class CustomUser(AbstractUser):
     def __str__(self):
         #Muestra el nombre de usuario y el rol
         return f"{self.username} ({self.get_role_display()})"
+    
+    def save(self, *args, **kwargs):
+        if self.role == 0:  # Si el rol es Admin
+            self.is_staff = True  # Activamos is_staff automáticamente
+        else:
+            self.is_staff = False  # Desactivamos is_staff si no es Admin
+
+        super().save(*args, **kwargs)  # Llamamos al método save original
 
 # Modelo de los horarios de los barberos
 class BarberSchedule(models.Model):
