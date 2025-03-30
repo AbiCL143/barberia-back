@@ -18,7 +18,6 @@ class CustomUser(AbstractUser):
     #Se crea un campo de activo
     is_active = models.BooleanField(default=True)
 
-
     #Puntos de recompensa
     reward_points = models.PositiveIntegerField(default=0)
     
@@ -67,3 +66,57 @@ class BarberSchedule(models.Model):
 
     def __str__(self):
         return f"Horario de {self.id_barber.username}: {self.days}"
+    
+class Service(models.Model):
+    name = models.CharField(max_length=150)
+    description = models.TextField(blank=True, null=True)
+    time = models.IntegerField(default=30)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    active_service = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
+class Reservation(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pendiente'),
+        ('confirmed', 'Confirmada'),
+        ('canceled', 'Cancelada'),
+        ('completed', 'Completada')
+    ]
+    
+    id_client = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='client_reservations')
+    id_barber = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='barber_reservations')
+    id_service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    date = models.DateTimeField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    pay = models.BooleanField(default=False)
+
+class Payment(models.Model):
+    METHOD_CHOICES = [('cash', 'Efectivo Debito'), ('card', 'Tarjeta Credito')]
+
+    reservation = models.OneToOneField(Reservation, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=15, decimal_places=2, blank=True)
+    method = models.CharField(max_length=15, choices=METHOD_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.amount:  # Si no se ha proporcionado amount, obtenemos el precio del servicio
+            self.amount = self.reservation.service.price
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Payment {self.id} - {self.reservation}"
+    
+class UserCard(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    card_number = models.CharField(max_length=16)
+    expiration_month = models.CharField(max_length=2)
+    expiration_year = models.CharField(max_length=4)
+
+    nickname = models.CharField(max_length=50, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.nickname} - ****{self.card_number[-4:]}"

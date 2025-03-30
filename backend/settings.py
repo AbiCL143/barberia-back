@@ -64,6 +64,12 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+}
+
 AUTH_USER_MODEL = 'accounts.CustomUser' #Se cambia el modelo de usuario por el creado en accounts
 
 
