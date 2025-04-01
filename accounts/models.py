@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+# Modelo del usuario personalizado
 class CustomUser(AbstractUser):
     ROLE_CHOICES = (
         (0, 'Admin'),
@@ -66,7 +67,8 @@ class BarberSchedule(models.Model):
 
     def __str__(self):
         return f"Horario de {self.id_barber.username}: {self.days}"
-    
+
+# Modelo de los servicios   
 class Service(models.Model):
     name = models.CharField(max_length=150)
     description = models.TextField(blank=True, null=True)
@@ -77,7 +79,9 @@ class Service(models.Model):
     def __str__(self):
         return self.name
 
+# Modelo de las reservas
 class Reservation(models.Model):
+    # Se define el estado de la reserva con las opciones disponibles
     STATUS_CHOICES = [
         ('pending', 'Pendiente'),
         ('confirmed', 'Confirmada'),
@@ -92,6 +96,7 @@ class Reservation(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     pay = models.BooleanField(default=False)
 
+# Modelo de los pagos
 class Payment(models.Model):
     METHOD_CHOICES = [('cash', 'Efectivo Debito'), ('card', 'Tarjeta Credito')]
 
@@ -108,7 +113,8 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Payment {self.id} - {self.reservation}"
-    
+
+# Modelo de las tarjetas de usuario    
 class UserCard(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     card_number = models.CharField(max_length=16)

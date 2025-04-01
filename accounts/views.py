@@ -34,6 +34,7 @@ class BarberScheduleViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         barber_id = request.query_params.get('barber_id')
 
+        #  Consulta de horarios por barbero o todos los horarios
         if barber_id:
             schedules = BarberSchedule.objects.filter(id_barber=barber_id)
         else:
@@ -41,14 +42,17 @@ class BarberScheduleViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(schedules, many=True)
         return Response(serializer.data)
-    
+
+# Sección de vistas para los usuarios y servicios    
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
 
+    # Permisos para la vista de usuarios
     def get_permissions(self):
         return UserPermissionsHelper.get_permissions(self)
 
+    # Método para manejar la creación y actualización de usuarios con contraseña hasheada
     def perform_create(self, serializer):
         response = UserPermissionsHelper.perform_create(serializer, self.request)
         if response:  # Si hay error, devolverlo
@@ -81,7 +85,8 @@ class UserViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(role=role)
             
         return queryset
-    
+
+# Sección de vistas para los servicios y reservas    
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
@@ -102,10 +107,12 @@ class ServiceViewSet(viewsets.ModelViewSet):
         method = request.data.get('method', 'cash')
         return Response(adapter.process_service_payment(service.id, method))
 
+# Sección de vistas para las reservas y pagos
 class ReservationViewSet(viewsets.ModelViewSet):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
     
+    # Permisos para la vista de reservas
     def get_queryset(self):
         user = self.request.user
         if user.role == 0:  # Admin
@@ -116,6 +123,7 @@ class ReservationViewSet(viewsets.ModelViewSet):
             return Reservation.objects.filter(id_client=user.id)
         return Reservation.objects.none()  # No devuelve nada si no es un usuario válido
 
+    # Método para manejar la creación de reservas
     def perform_create(self, serializer):
         """Realiza la creación de la reserva, asignando cliente y barbero."""
         
@@ -142,14 +150,16 @@ class ReservationViewSet(viewsets.ModelViewSet):
         # Ahora guardamos la reserva con los datos de cliente y barbero
         serializer.save(id_client=client, id_barber=barber)
         print(f"Guardando reserva con cliente: {client.id} y barbero: {barber.first_name} {barber.last_name}")
-        
+
+# Método para manejar el método de pago de la reserva        
 class PaymentViewSet(viewsets.ModelViewSet):
-    queryset = Payment.objects.all()  # ✅ Agregar queryset
+    queryset = Payment.objects.all()  # Agregar queryset
     serializer_class = PaymentSerializer
     
     def get_queryset(self):
         return Payment.objects.filter(reservation__id_client=1)
-    
+
+# Método para manejar el método de pago de la tarjeta del usuario    
 class UserCardViewSet(viewsets.ModelViewSet):
     queryset = UserCard.objects.all()  # ✅ Agregar queryset
     serializer_class = UserCardSerializer

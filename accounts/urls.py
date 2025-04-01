@@ -10,8 +10,8 @@ router.register(r'users', UserViewSet, basename='user')
 router.register(r'barber-schedules', BarberScheduleViewSet, basename='barberschedule')
 router.register(r'services', ServiceViewSet)  
 router.register(r'reservations', ReservationViewSet)
-router.register(r'payments', PaymentViewSet, basename='payment')  # ✅ Especificar basename
-router.register(r'cards', UserCardViewSet, basename='usercard')  # ✅ Especificar basename
+router.register(r'payments', PaymentViewSet, basename='payment')  # Especificar basename
+router.register(r'cards', UserCardViewSet, basename='usercard')  #  Especificar basename
 
 urlpatterns = [
     path('', views.home),  # Incluye las rutas del ViewSet

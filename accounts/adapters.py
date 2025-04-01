@@ -1,4 +1,9 @@
+from .flyweight import ServiceFlyweight
+from datetime import datetime
+
+# Adaptador para el procesamiento de pagos
 class PaymentAdapter:
+    # Adaptador para el procesamiento de pagos de reservas
     def process_payment(self, method, amount):
         if method == 'card':
             return self._process_credit_card(amount)
@@ -8,15 +13,17 @@ class PaymentAdapter:
     def _process_credit_card(self, amount):
         """Lógica adaptada para procesamiento de tarjeta"""
         return {'status': 'success', 'method': 'card'}
-    
+
+# Adaptador para el procesamiento de pagos de servicios    
 class ServicePaymentAdapter:
+    
     def process_service_payment(self, service_id, method):
-        from .flyweight import ServiceFlyweight
+        """Lógica de procesamiento de pagos para servicios"""
         service_data = ServiceFlyweight.get_service(service_id)
         
         if not service_data:
             return {'status': 'error', 'message': 'Servicio no encontrado'}
-            
+        # Validación de método de pago 
         if method == 'cash':
             return {
                 'status': 'success',
@@ -26,8 +33,8 @@ class ServicePaymentAdapter:
             }
         elif method == 'card':
             return self._process_card_payment(service_data)
-    
-    def _process_card_payment(self, service_data):
+    # Processa el pago de tarjeta
+    def _process_card_payment(self, service_data): # Definición de método que recibe el servicio para procesar el pago
         return {
             'status': 'success',
             'method': 'card',
@@ -35,9 +42,9 @@ class ServicePaymentAdapter:
             'amount': service_data['price'],
             'fee': service_data['price'] * 0.02  # 2% de comisión
         }
-from datetime import datetime
-
+# Adaptador para la validación de tarjetas
 class CardValidationAdapter:
+    
     @staticmethod
     def validate_expiration(month, year):
         """Adapta validaciones de tarjeta a formato reusable"""
@@ -45,13 +52,13 @@ class CardValidationAdapter:
         
         if not 1 <= int(month) <= 12:
             errors['expiration_month'] = "El mes debe estar entre 1 y 12."
-        
+        # El año actual
         current_year = datetime.now().year
         if int(year) < current_year:
             errors['expiration_year'] = "El año no puede ser menor al actual."
         
         return errors
-
+# Adaptador para el procesamiento de pagos
 class PaymentProcessingAdapter:
     def process_payment(self, payment_data):
         """Adaptador para procesamiento de pagos"""

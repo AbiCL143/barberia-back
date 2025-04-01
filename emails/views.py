@@ -18,8 +18,7 @@ class AppointmentCancellationEmailView(APIView):
             reservation = Reservation.objects.get(id=reservation_id)
             barber = reservation.id_barber
             customer = reservation.id_client  # Cliente relacionado con la reserva
-            appointment_time = reservation.date
-            reservation.delete()  # IMPORTANTE PODEMOS O DEJAR LA RESERVACIÓN Eliminar la reserva al cancelar la cita
+            appointment_time = reservation.date            
         except Reservation.DoesNotExist:
             return Response({"error": "Reservación no encontrada."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -32,12 +31,12 @@ class AppointmentCancellationEmailView(APIView):
             <html>
             <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333;">
                 <div style="width: 80%; margin: auto; padding: 20px; background-color: white; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                    <h2 style="color: #2c3e50;">Confirmación de tu cita</h2>
+                    <h2 style="color: #2c3e50;">Cancelacion de tu cita</h2>
                     <p>Hola {customer.first_name} {customer.last_name},</p>
-                    <p>Tu cita en BARBER SHOP ha sido confirmada para la siguiente fecha:</p>
+                    <p>Tu cita en BARBER SHOP ha sido cancelada:</p>
                     <p><strong>Barbero:</strong> {barber.first_name} {barber.last_name}</p>
                     <p><strong>Hora de la cita:</strong> {appointment_time}</p>
-                    <p>¡Te esperamos!</p>
+                    <p>Favor de contactarse con BARBER SHOP</p>
                     <p>Saludos,<br>El equipo de BARBER SHOP</p>
                     <footer style="margin-top: 20px; font-size: 12px; color: #bdc3c7; text-align: center;">
                         <p>Este es un correo automático. No respondas a este mensaje.</p>

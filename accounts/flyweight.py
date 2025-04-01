@@ -8,14 +8,18 @@ class BarberFlyweight:
     
     @classmethod
     def get_barber(cls, barber_id):
+        # Verifica si el barber_id ya está en la caché        
         if barber_id not in cls._cache:
             try:
+                # Si no está en la caché, obtiene el objeto User correspondiente                
                 barber = User.objects.get(id=barber_id)
+                # Almacena los datos relevantes del barbero en la caché                
                 cls._cache[barber_id] = {
                     'name': barber.username,
                     'specialties': list(barber.services_offered.all().values_list('name', flat=True))
                 }
             except User.DoesNotExist:
+                # Si el barbero no existe, retorna None                
                 return None
         return cls._cache[barber_id]
     
@@ -24,9 +28,12 @@ class ServiceFlyweight:
     
     @classmethod
     def get_service(cls, service_id):
+        # Verifica si el service_id ya está en la caché        
         if service_id not in cls._cache:
             try:
+                # Si no está en la caché, obtiene el objeto Service correspondiente                
                 service = Service.objects.get(id=service_id)
+                # Almacena los datos relevantes del servicio en la caché                
                 cls._cache[service_id] = {
                     'name': service.name,
                     'price': float(service.price),
