@@ -4,12 +4,13 @@ from .models import CustomUser, BarberSchedule, Service, Reservation, Payment, U
 
 # serializers.py
 from datetime import datetime, time  
-from .factories import ReservationFactory
-from .flyweight import BarberFlyweight, PaymentFlyweight, ServiceFlyweight
+from .factories import ReservationFactory, CardFactory
+from .flyweight import PaymentFlyweight, ServiceFlyweight
 from django.contrib.auth import get_user_model  # Agrega esta línea al inicio del archivo
 from .factories import ServiceFactory
 from .adapters import ServicePaymentAdapter, CardValidationAdapter, PaymentProcessingAdapter, PaymentAdapter
 
+# Sección de serializadores para los horarios de los barberos
 class BarberScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = BarberSchedule
@@ -20,6 +21,7 @@ class BarberScheduleSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Solo los barberos pueden tener un horario.")
         return value
 
+# Sección de serializadores para los usuarios
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -56,11 +58,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
             instance.set_password(password)  # Hashea la contraseña
         instance.save()
         return instance
-    
+
+# Sección de serializadores para los servicios    
 class ServiceSerializer(serializers.ModelSerializer):
-    cached_details = serializers.SerializerMethodField()
-    _factory = ServiceFactory()
-    _payment_adapter = ServicePaymentAdapter()
+    cached_details = serializers.SerializerMethodField() ## Campo para almacenar los detalles en caché
+    _factory = ServiceFactory() ## Factory para crear servicios
+    _payment_adapter = ServicePaymentAdapter() ## Adaptador para el pago de servicios
 
     class Meta:
         model = Service
@@ -69,17 +72,18 @@ class ServiceSerializer(serializers.ModelSerializer):
         read_only_fields = ['cached_details']
 
     def get_cached_details(self, obj):
-        return ServiceFlyweight.get_service(obj.id)
+        return ServiceFlyweight.get_service(obj.id) ## Método para obtener los detalles del servicio desde el flyweight
 
     def create(self, validated_data):
         return self._factory.create_service(validated_data)
 
+# Sección de serializadores para las reservas
 class ReservationSerializer(serializers.ModelSerializer):
     barber_name = serializers.CharField(source='id_barber.first_name', read_only=True)
     id_client = serializers.IntegerField(source='id_client.id', read_only=True)  # Añadido para mostrar el email del cliente OPCIONAL NO RECOMENDABLE
 
-    _factory = ReservationFactory()
-    _payment_adapter = PaymentAdapter()
+    _factory = ReservationFactory() # Factory para crear reservas
+    _payment_adapter = PaymentAdapter() ## Adaptador para el pago de reservas
 
     class Meta:
         model = Reservation
@@ -108,9 +112,10 @@ class ReservationSerializer(serializers.ModelSerializer):
                 "details": str(e),
                 "solution": "Asegúrate que el usuario esté autenticado"
             })
-    
+
+# Sección de serializadores para las tarjetas de usuario   
 class UserCardSerializer(serializers.ModelSerializer):
-    _validation_adapter = CardValidationAdapter()
+    _validation_adapter = CardValidationAdapter() # Adaptador para validar tarjetas de usuario
     
     class Meta:
         model = UserCard
@@ -127,12 +132,11 @@ class UserCardSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        from .factories import CardFactory
         return CardFactory.create_card(validated_data)
 
 class PaymentSerializer(serializers.ModelSerializer):
-    _processing_adapter = PaymentProcessingAdapter()
-    _flyweight = PaymentFlyweight()
+    _processing_adapter = PaymentProcessingAdapter() # Adaptador para procesar pagos
+    _flyweight = PaymentFlyweight() # Flyweight para almacenar detalles de pagos
     
     reservation_id = serializers.IntegerField(source='reservation.id', read_only=True)
     service_name = serializers.CharField(source='reservation.id_service.name', read_only=True)
