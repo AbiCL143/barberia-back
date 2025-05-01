@@ -48,15 +48,13 @@ class ReservationAdmin(admin.ModelAdmin):
     get_barber_name.admin_order_field = 'id_barber'  # Permite ordenar por este campo
     get_barber_name.short_description = 'Barber Name'  # Nombre en la columna del admin
 
-
-
 # Registrar Servicios en el Admin
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'description', 'time', 'price', 'active_service')  # Campos visibles
-    list_filter = ('active_service',)  # Filtro para ver solo servicios activos
-    search_fields = ('name', 'description')  # Permite buscar por nombre y descripción del servicio
-    ordering = ('name',)
+    list_display = ('id', 'category', 'name', 'description', 'time', 'price', 'active_service')  # Campos visibles
+    list_filter = ('active_service', 'category')  # Filtro para ver solo servicios activos
+    search_fields = ('category', 'name', 'description')  # Permite buscar por nombre y descripción del servicio
+    ordering = ('id',)
 
 # Registrar Pagos en el Admin
 @admin.register(Payment)

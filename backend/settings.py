@@ -36,6 +36,7 @@ SITE_ID = 4
 
 INSTALLED_APPS = [
     'accounts',         # Agrega la aplicación de cuentas
+    'corsheaders',     # Agrega la aplicación de corsheaders
     
     'django.contrib.admin',
     'django.contrib.auth',
@@ -75,6 +76,7 @@ AUTH_USER_MODEL = 'accounts.CustomUser' #Se cambia el modelo de usuario por el c
 
 MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
+    'corsheaders.middleware.CorsMiddleware', # Agrega el middleware de corsheaders
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -181,3 +183,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+CORS_ALLOW_ALL_ORIGINS = True # Permitir todas las solicitudes de origen cruzado (CORS)
