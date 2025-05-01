@@ -70,6 +70,13 @@ class BarberSchedule(models.Model):
 
 # Modelo de los servicios   
 class Service(models.Model):
+    SERVICES_CHOICES = (
+        (1, 'Cortes y Estilos'),
+        (2, 'Barba y Afeitado'),
+        (3, 'Tratamientos y Cuidado'),
+    )
+    
+    category = models.PositiveSmallIntegerField(choices=SERVICES_CHOICES, default=1, blank=False, null=False)
     name = models.CharField(max_length=150)
     description = models.TextField(blank=True, null=True)
     time = models.IntegerField(default=30)

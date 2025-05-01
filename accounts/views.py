@@ -106,6 +106,15 @@ class ServiceViewSet(viewsets.ModelViewSet):
         adapter = ServicePaymentAdapter()
         method = request.data.get('method', 'cash')
         return Response(adapter.process_service_payment(service.id, method))
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        category = self.request.query_params.get('category')
+        
+        if category is not None:
+            queryset = queryset.filter(category=category)
+            
+        return queryset
 
 # Sección de vistas para las reservas y pagos
 class ReservationViewSet(viewsets.ModelViewSet):
