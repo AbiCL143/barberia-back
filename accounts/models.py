@@ -102,6 +102,7 @@ class Reservation(models.Model):
     date = models.DateTimeField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     pay = models.BooleanField(default=False)
+    person_name = models.CharField(max_length=70, blank=False, null=False)
 
 # Modelo de los pagos
 class Payment(models.Model):
