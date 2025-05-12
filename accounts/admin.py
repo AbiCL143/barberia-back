@@ -31,22 +31,18 @@ class BarberScheduleAdmin(admin.ModelAdmin):
     
 @admin.register(Reservation)
 class ReservationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'get_client_name', 'get_barber_name', 'id_service', 'date', 'status', 'pay')  # Mostrar nombre completo de cliente y barbero
+    list_display = ('id', 'get_client_email', 'person_name', 'get_barber_name', 'id_service', 'date', 'status', 'pay')  # Mostrar nombre del barbero y el correo del cliente
     list_filter = ('status', 'pay', 'id_barber', 'id_client')  # Filtros
     search_fields = ('id_client__email', 'id_barber__email', 'id_service__name')  # Permite buscar por email o nombre de servicio
     ordering = ('date',)
+    
+    
 
-    # Método para obtener el nombre completo del cliente
-    def get_client_name(self, obj):
-        return f"{obj.id_client.first_name}"  # Devuelve el nombre completo del cliente
-    get_client_name.admin_order_field = 'id_client'  # Permite ordenar por este campo
-    get_client_name.short_description = 'Client Name'  # Nombre en la columna del admin
-
-    # Método para obtener el nombre completo del barbero
-    def get_barber_name(self, obj):
-        return f"{obj.id_barber.first_name}"  # Devuelve el nombre completo del barbero
-    get_barber_name.admin_order_field = 'id_barber'  # Permite ordenar por este campo
-    get_barber_name.short_description = 'Barber Name'  # Nombre en la columna del admin
+    # Método para obtener el correo del cliente
+    def get_client_email(self, obj):
+        return f"{obj.id_client.email}"  # Devuelve el nombre completo del cliente
+    get_client_email.admin_order_field = 'id_client'  # Permite ordenar por este campo
+    get_client_email.short_description = 'Client Email'  # Nombre en la columna del admin
 
 # Registrar Servicios en el Admin
 @admin.register(Service)

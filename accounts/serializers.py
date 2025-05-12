@@ -87,7 +87,7 @@ class ReservationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reservation
-        fields = ('id_barber', 'barber_name', 'id_service', 'date', 'status', 'pay', 'id', "id_client")
+        fields = ('id_barber', 'barber_name', 'id_service', 'date', 'status', 'pay', 'id', "id_client", 'person_name')
         read_only_fields = ('status', 'barber_name')
 
     def create(self, validated_data):
